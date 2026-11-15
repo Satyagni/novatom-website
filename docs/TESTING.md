@@ -32,7 +32,19 @@ ONLY="form" node tests/e2e.mjs
 
 On Windows PowerShell: `$env:ONLY = 'form'; node tests/e2e.mjs`.
 
-The suite was written before the click-to-enter opener on the home page, which holds the page at the top until the visitor clicks. A test that scrolls the home page without clicking first can fail for that reason alone; if you see that, click or press a key before scrolling in the test.
+### Current status (last full run, 2026-11-15, local preview)
+
+40 checks pass. Five tests fail and have not been fixed yet:
+
+| Failing test | Likely cause (not yet confirmed) |
+|---|---|
+| `home scroll story` | The suite predates the click-to-enter opener. The home page now holds at the wordmark (scene state 7) until a click, so the test never leaves it. |
+| `OS reduce-motion is ignored` | Same: `page.click` times out on the home page while the opener is active. |
+| `worst-case matrix` | Same: the hero reports state 7 instead of the crystal. |
+| `axe` | Contrast failures at `/` and `/#space` on `.btn-sm` and `.lede` (measured at contrast 1.01) look like the nav and headline being captured while the opener holds them nearly transparent. `label-content-name-mismatch` on the loop step buttons (`button[data-go]`) is a separate finding and is probably real. |
+| `perf: home, phone, WebGL off, 6x CPU, 3G` | LCP 11.3 s and CLS 0.107 on the slowest simulated phone with WebGL off. Not investigated. |
+
+The first three need the tests to click or press a key before scrolling. The axe, label-mismatch and performance results are worth looking at before treating them as test problems.
 
 ## Diagnostic scripts
 
