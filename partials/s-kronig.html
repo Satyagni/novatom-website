@@ -1,0 +1,75 @@
+    <section class="kronig" id="kronig" data-rail="Kronig" data-at=".08" data-pose="st:6;op:.55;ox:3.4;sc:1;rp:.5;du:.5;cl:-1 -1 -.1 1;ck:.9" data-at2=".4" data-pose2="st:6;op:0" aria-labelledby="h-kronig">
+      <div class="kronig-inner">
+        <header class="kronig-head">
+          <h1 id="h-kronig" class="h2 h1" data-split>Kronig: device simulation from a plain-English request.</h1>
+          <div class="kronig-lead">
+            <p>Describe the device as you would to a colleague. Kronig asks only for what is missing, proposes a plan for your approval, runs the simulation, and reports a result only after independent checks on the solver output have passed. In our platform it is the device layer: it predicts how a device built from a discovered material behaves.</p>
+            <p class="note">Desktop app for Windows, macOS and Linux. Runs on DEVSIM locally or on Synopsys Sentaurus over SSH.</p>
+          </div>
+        </header>
+
+        <ol class="pipe" id="pipe" aria-label="How a Kronig run works">
+          <li><span class="pipe-t">Request</span><small>Plain English</small></li>
+          <li><span class="pipe-t">Questions</span><small>Only what it needs</small></li>
+          <li><span class="pipe-t">Typed spec</span><small>Simulator-neutral</small></li>
+          <li><span class="pipe-t">Plan approval</span><small>You sign off first</small></li>
+          <li><span class="pipe-t">Simulation</span><small>DEVSIM or Sentaurus</small></li>
+          <li><span class="pipe-t">Validation</span><small>20+ physics checks</small></li>
+          <li><span class="pipe-t">Workbench</span><small>Plots, CSV, SVG, PNG</small></li>
+        </ol>
+
+        <div class="k-grid">
+          <div class="k-agree">
+            <h3 class="h3">Two independent solvers agree.</h3>
+            <p>The same experiment is run on DEVSIM and on Synopsys Sentaurus. The two solvers share no code, so agreement between them is a genuine cross-check.</p>
+            <ul class="bars" id="bars" aria-label="Difference between the two solvers">
+              <li style="--w:74%"><span class="bar-l">Built-in potential, PN junction</span><span class="bar-t" aria-hidden="true"><span class="bar-f"></span></span><span class="bar-v" data-to="3.7">3.7%</span></li>
+              <li style="--w:72%"><span class="bar-l">Largest MOSFET output-current difference</span><span class="bar-t" aria-hidden="true"><span class="bar-f"></span></span><span class="bar-v" data-to="3.6">3.6%</span></li>
+              <li style="--w:20%"><span class="bar-l">Median MOS capacitance difference</span><span class="bar-t" aria-hidden="true"><span class="bar-f"></span></span><span class="bar-v" data-to="1.0">1.0%</span></li>
+            </ul>
+            <p class="note">Asymmetric silicon junction, 2.5 µm: peak field 101 kV/cm on DEVSIM and 97 kV/cm on Sentaurus. Axis runs from 0 to 5%.</p>
+          </div>
+
+          <div class="k-checks">
+            <h3 class="h3">Validation is code, not judgement.</h3>
+            <p>A run is reported as passed only when independent checks on the solver output agree. Twelve of the more than twenty checks are listed.</p>
+            <ul class="checks" id="checks">
+              <li>Solver convergence at every point</li>
+              <li>Poisson residual consistency</li>
+              <li>Finite values everywhere</li>
+              <li>Band ordering</li>
+              <li>Mesh halving re-solve, 3% limit</li>
+              <li>Carrier statistics applicability</li>
+              <li>Grid convergence index (Roache)</li>
+              <li>Quasi-static versus AC capacitance</li>
+              <li>Terminal current conservation</li>
+              <li>Sweep continuity</li>
+              <li>Requested outputs present</li>
+              <li>Study order preserved</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="k-suite">
+          <h3 class="h3">Test record.</h3>
+          <p>A 34-scenario suite, from vague one-line requests to fully specified devices, is driven through the real application on both backends by an automated harness. Requests outside the supported physics are refused with an explanation.</p>
+          <dl class="facts facts-row">
+            <div><dt>29 + 29</dt><dd>scenarios with every check passed, on DEVSIM and on Sentaurus</dd></div>
+            <div><dt>741</dt><dd>validation checks passed in total</dd></div>
+            <div><dt>2.95%</dt><dd>largest mesh sensitivity, against a 3% limit</dd></div>
+          </dl>
+        </div>
+
+        <table class="k-exps">
+          <caption class="visually-hidden">The nine experiment types Kronig supports</caption>
+          <thead><tr><th scope="col">Device</th><th scope="col">What you can ask for</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">PN diode</th><td>Equilibrium bands, field and charge. Bias sweep with I-V and depletion width. Parameter studies, one experiment per variant.</td></tr>
+            <tr><th scope="row">Metal-semiconductor</th><td>Contact barrier height and bands. Schottky diode forward and reverse I-V.</td></tr>
+            <tr><th scope="row">MOS capacitor</th><td>Equilibrium bands and surface charge. Bias sweep with C-V, Q-V and surface carriers.</td></tr>
+            <tr><th scope="row">MOSFET, 2D</th><td>Band diagram under bias. Id-Vg and Id-Vd.</td></tr>
+          </tbody>
+        </table>
+        <p class="note k-foot">Wide-bandgap device physics for GaN and SiC is the next addition, so material cards from the discovery engine can flow straight into device simulation. Sentaurus is a trademark of Synopsys, Inc.</p>
+      </div>
+    </section>

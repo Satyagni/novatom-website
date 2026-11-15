@@ -1,0 +1,12 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch({ headless: true, args: ['--use-angle=d3d11', '--ignore-gpu-blocklist'] });
+const ctx = await b.newContext({ viewport: { width: 1440, height: 800 } });
+const page = await ctx.newPage();
+await page.goto('http://127.0.0.1:4173/', { waitUntil: 'domcontentloaded' });
+await page.waitForTimeout(6800);
+await page.click('#scrollCue');
+await page.waitForTimeout(5200);
+await page.screenshot({ path: 'tests/shots/land-mid.png' });
+await page.waitForTimeout(6000);
+await page.screenshot({ path: 'tests/shots/land-end.png' });
+await b.close();

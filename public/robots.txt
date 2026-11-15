@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://novatomlabs.com/sitemap.xml

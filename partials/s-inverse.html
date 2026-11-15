@@ -1,0 +1,33 @@
+    <section class="inverse" id="inverse" data-land="0.4" data-rail="Inverse design" data-pose="st:5;op:0" aria-labelledby="h-inverse">
+      <div class="inverse-inner">
+        <div class="inverse-copy">
+          <h2 id="h-inverse" class="h2" data-split>Specify a target. Receive a composition and a growth recipe.</h2>
+          <p>Given a required emission wavelength, NexCon-03 works backwards from the band gap to an alloy composition and then to growth conditions. The example below targets 280 nm ultraviolet emission.</p>
+          <p class="inv-read" id="invRead" aria-live="off"><span id="invX">Al fraction 0.46</span><span id="invE">4.43 eV</span><span id="invL">280 nm</span></p>
+        </div>
+
+        <figure class="invchart">
+          <svg id="invSvg" viewBox="0 0 600 340" role="img" aria-label="Band gap of aluminium gallium nitride against aluminium fraction. A marker at 0.46 aluminium sits at 4.43 electronvolts, which is 280 nanometres, the start of the UV-C band.">
+            <g id="invBands"></g>
+            <g id="invGrid"></g>
+            <path id="invCurve" class="inv-curve" d=""/>
+            <g id="invMarker" class="inv-marker">
+              <line class="inv-guide" id="invGv" x1="0" y1="0" x2="0" y2="0"/>
+              <line class="inv-guide" id="invGh" x1="0" y1="0" x2="0" y2="0"/>
+              <circle r="6.5" cx="0" cy="0" id="invDot"/>
+            </g>
+          </svg>
+          <figcaption>Band gap of Al<sub>x</sub>Ga<sub>1-x</sub>N against aluminium fraction, from Vegard's law with bowing. UV bands follow the emission wavelength.</figcaption>
+        </figure>
+
+        <dl class="recipe" id="recipe">
+          <div class="rec-head"><dt>The recipe for Al<sub>0.46</sub>Ga<sub>0.54</sub>N</dt><dd>280 nm UV-C</dd></div>
+          <div><dt>Growth</dt><dd>MOCVD, 1,079 °C</dd></div>
+          <div><dt>Substrate</dt><dd>Sapphire (0001)</dd></div>
+          <div><dt>Precursors</dt><dd>TMGa, TMAl, NH<sub>3</sub></dd></div>
+          <div><dt>Pressure</dt><dd>100 mbar</dd></div>
+          <div><dt>Nucleation</dt><dd>530 °C layer</dd></div>
+          <div><dt>Growth rate</dt><dd>1 to 3 µm/h</dd></div>
+        </dl>
+      </div>
+    </section>

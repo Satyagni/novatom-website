@@ -1,0 +1,18 @@
+import { chromium } from 'playwright';
+import fs from 'fs';
+const b = await chromium.launch({ headless: true, args: ['--use-angle=d3d11', '--ignore-gpu-blocklist'] });
+const page = await (await b.newContext({ viewport: { width: 1440, height: 800 } })).newPage();
+await b.startTracing(page, { path: 'tests/shots/trace3.json', categories: ['devtools.timeline', 'gpu', 'cc', 'toplevel'] });
+await page.goto('http://127.0.0.1:4173/', { waitUntil: 'domcontentloaded' });
+await page.waitForTimeout(7000);
+const clickAt = await page.evaluate(() => performance.timeOrigin + performance.now());
+await page.mouse.click(700, 300);
+await page.waitForTimeout(5500);
+await b.stopTracing();
+const t = JSON.parse(fs.readFileSync('tests/shots/trace3.json', 'utf8'));
+const ev = t.traceEvents || t;
+const first = Math.min(...ev.filter((e) => e.name === 'navigationStart' || e.name === 'TracingStartedInBrowser').map((e) => e.ts));
+const clickTs = ev.find((e) => e.name === 'EventDispatch' && e.args?.data?.type === 'pointerdown')?.ts;
+console.log('click ts rel to first (s):', clickTs ? ((clickTs - first) / 1e6).toFixed(2) : 'n/a');
+ev.filter((e) => e.name === 'GPUTask' && e.dur > 40000).forEach((e) => console.log(((e.ts - first) / 1e6).toFixed(2) + 's', Math.round(e.dur / 1000) + 'ms'));
+await b.close();

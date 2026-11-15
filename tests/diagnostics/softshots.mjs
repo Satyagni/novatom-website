@@ -1,0 +1,12 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch({ headless: true, args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--disable-gpu'] });
+const page = await (await b.newContext({ viewport: { width: 1366, height: 700 } })).newPage();
+await page.goto('http://127.0.0.1:4173/', { waitUntil: 'domcontentloaded' });
+await page.waitForTimeout(5000);
+console.log(JSON.stringify(await page.evaluate(() => ({ tier: window.__tier.name, draw: window.__field.drawCount, dpr: window.__field.dpr, ema: Math.round(window.__field.ema) }))));
+await page.screenshot({ path: 'tests/shots/soft-hero.png' });
+const g = await page.evaluate(() => window.__geo);
+await page.evaluate((y) => window.scrollTo(0, y), g.space.top + 0.3 * (g.space.h - 700));
+await page.waitForTimeout(2200);
+await page.screenshot({ path: 'tests/shots/soft-dive.png' });
+await b.close();

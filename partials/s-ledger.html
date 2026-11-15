@@ -1,0 +1,65 @@
+    <section class="ledger-track" id="ledger" aria-labelledby="h-ledger" data-land="0.9" data-rail="The evidence record" data-at=".3" data-pose="st:5;op:.3;ox:3.2;sc:1;rp:.5;du:1;cl:-1 -1 -.12 1;ck:0">
+      <div class="ledger-sticky">
+        <div class="ledger-copy">
+          <h2 id="h-ledger" class="h2" data-split>Language models plan. Simulators and instruments measure.</h2>
+          <p>Every quantitative result comes from a deterministic tool: a simulator, an instrument or a parser. A language model never produces a number. A validator then decides whether each result counts.</p>
+          <p>Results are stored with their method, unit, uncertainty, validity range and a trust tier, so the system knows how much weight each one deserves.</p>
+          <ul class="gates" aria-label="Where a person approves">
+            <li><span class="gate-h" aria-hidden="true">H</span>The experiment plan, before anything runs</li>
+            <li><span class="gate-h" aria-hidden="true">H</span>The first physical experiment</li>
+            <li><span class="gate-h" aria-hidden="true">H</span>The final report and any invention record</li>
+          </ul>
+        </div>
+
+        <figure class="ledger" id="ledgerFig">
+          <table>
+            <caption class="visually-hidden">Illustrative evidence record for one candidate: an estimate is replaced by a simulation, and an experiment is awaiting approval</caption>
+            <thead>
+              <tr><th scope="col">Result</th><th scope="col">Value</th><th scope="col" class="col-range">Range, 0 to 1</th><th scope="col">Trust</th></tr>
+            </thead>
+            <tbody>
+              <tr class="lrow" data-row="1">
+                <th scope="row">Yield<small>candidate 1042, surrogate model</small></th>
+                <td class="val"><span class="num" data-to="0.62" data-dec="2">0.62</span><small>± 0.18</small></td>
+                <td class="col-range">
+                  <svg class="range" viewBox="0 0 160 16" role="img" aria-label="Range 0.44 to 0.80">
+                    <line class="ax" x1="0" y1="8" x2="160" y2="8"/>
+                    <rect class="bar bar-ai" x="70.4" y="4" width="57.6" height="8" rx="1"/>
+                    <circle class="pt pt-ai" cx="99.2" cy="8" r="3"/>
+                  </svg>
+                </td>
+                <td><span class="chip chip-ai">Estimate</span></td>
+              </tr>
+              <tr class="lrow" data-row="2">
+                <th scope="row">Yield<small>candidate 1042, high-fidelity simulation</small></th>
+                <td class="val"><span class="num" data-to="0.57" data-dec="2">0.57</span><small>± 0.05</small></td>
+                <td class="col-range">
+                  <svg class="range" viewBox="0 0 160 16" role="img" aria-label="Range 0.52 to 0.62">
+                    <line class="ax" x1="0" y1="8" x2="160" y2="8"/>
+                    <rect class="bar bar-dft" x="83.2" y="4" width="16" height="8" rx="1"/>
+                    <circle class="pt pt-dft" cx="91.2" cy="8" r="3"/>
+                  </svg>
+                </td>
+                <td><span class="chip chip-dft">Simulated</span></td>
+              </tr>
+              <tr class="lrow lrow-wait" data-row="3">
+                <th scope="row">Yield<small>candidate 1042, instrument run</small></th>
+                <td class="val"><span class="dash">awaiting human approval</span></td>
+                <td class="col-range"><span class="dash">n/a</span></td>
+                <td><span class="chip chip-gate">Measured</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="ladder" id="ladder" style="--m:1" role="group" aria-label="Fidelity tiers, from instant to days">
+            <ol>
+              <li><b>Tier 0</b><span>Rules and literature</span><i>instant</i></li>
+              <li><b>Tier 1</b><span>Surrogate models</span><i>seconds</i></li>
+              <li><b>Tier 2</b><span>High-fidelity simulation</span><i>hours</i></li>
+              <li><b>Tier 3</b><span>Physical experiment</span><i>days</i></li>
+            </ol>
+            <span class="ladder-dot" aria-hidden="true"></span>
+          </div>
+          <figcaption>Illustrative values for one hypothetical candidate. Every number is stored with its method and trust tier, and measured data enters only after a person approves the first physical run.</figcaption>
+        </figure>
+      </div>
+    </section>

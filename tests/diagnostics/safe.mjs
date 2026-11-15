@@ -1,0 +1,10 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch({ headless: true, args: ['--use-angle=d3d11', '--ignore-gpu-blocklist'] });
+const page = await (await b.newContext({ viewport: { width: 1440, height: 800 } })).newPage();
+const errs = []; page.on('console', (m) => { if (['error','warning'].includes(m.type())) errs.push(m.text()); }); page.on('pageerror', (e) => errs.push(e.message));
+await page.goto('http://127.0.0.1:4173/?safe&debug', { waitUntil: 'domcontentloaded' });
+await page.waitForTimeout(3500);
+console.log(JSON.stringify(await page.evaluate(() => ({ cls: document.documentElement.className, grain: getComputedStyle(document.querySelector('.grain')).display, wipe: getComputedStyle(document.getElementById('wipe')).display, cursor: getComputedStyle(document.getElementById('cursor')).display, lenis: document.documentElement.classList.contains('lenis'), field: !!window.__field, h1: getComputedStyle(document.querySelector('h1')).visibility }))));
+await page.mouse.wheel(0, 1400); await page.waitForTimeout(1200);
+console.log('scrollY after wheel:', await page.evaluate(() => Math.round(scrollY)), '| errors:', errs.join(' | ') || 'none');
+await b.close();

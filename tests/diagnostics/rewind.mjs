@@ -1,0 +1,14 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch({ headless: true, args: ['--use-angle=d3d11', '--ignore-gpu-blocklist'] });
+const page = await (await b.newContext({ viewport: { width: 1440, height: 800 } })).newPage();
+await page.goto('http://127.0.0.1:4173/', { waitUntil: 'domcontentloaded' });
+await page.waitForTimeout(7000);
+await page.mouse.click(700, 300);
+await page.waitForTimeout(5200);
+await page.evaluate(() => { window.__w = []; const f = () => { const s = window.__field.state; window.__w.push([Math.round(performance.now()), +s.ripple.toFixed(2), +s.scale.toFixed(3), +s.offsetX.toFixed(2), +s.m.toFixed(3), s.a]); window.__r = requestAnimationFrame(f); }; f(); });
+await page.click('.replay');
+await page.waitForTimeout(4200);
+const w = await page.evaluate(() => { cancelAnimationFrame(window.__r); return window.__w; });
+const t0 = w[0][0];
+w.filter((_, i) => i % 8 === 0).forEach((r) => console.log(((r[0] - t0) / 1000).toFixed(2) + 's', 'ripple=' + r[1], 'scale=' + r[2], 'ox=' + r[3], 'm=' + r[4], 'a=' + r[5]));
+await b.close();

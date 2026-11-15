@@ -1,0 +1,168 @@
+import gsap from 'gsap';
+
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+
+/* ------------------------------------------------------------------ cursor: dot + lagging ring, magnetic buttons */
+export function initCursor() {
+  if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  const root = document.documentElement;
+  const el = $('#cursor');
+  if (!el) return;
+  root.classList.add('has-cursor');
+  const dot = $('.cursor-dot', el), ring = $('.cursor-ring', el);
+  const p = { x: -100, y: -100, rx: -100, ry: -100 };
+  let seen = false;
+
+  addEventListener('pointermove', (e) => {
+    if (e.pointerType === 'touch') return;
+    p.x = e.clientX; p.y = e.clientY;
+    if (!seen) { seen = true; p.rx = p.x; p.ry = p.y; el.classList.add('is-on'); }
+  }, { passive: true });
+  document.addEventListener('pointerleave', () => el.classList.remove('is-on'));
+  document.addEventListener('pointerenter', () => seen && el.classList.add('is-on'));
+  document.addEventListener('pointerover', (e) => {
+    const t = e.target.closest('a, button, [role="button"], .mat, summary');
+    const txt = e.target.closest('input, textarea');
+    el.classList.toggle('is-link', !!t && !txt);
+    el.classList.toggle('is-text', !!txt);
+  });
+  document.addEventListener('pointerdown', () => el.classList.add('is-down'));
+  document.addEventListener('pointerup', () => el.classList.remove('is-down'));
+
+  gsap.ticker.add(() => {
+    p.rx += (p.x - p.rx) * 0.16;
+    p.ry += (p.y - p.ry) * 0.16;
+    dot.style.transform = `translate3d(${p.x}px, ${p.y}px, 0)`;
+    ring.style.transform = `translate3d(${p.rx}px, ${p.ry}px, 0)`;
+  });
+
+  // magnetic buttons: the button leans toward the pointer
+  document.addEventListener('pointermove', (e) => {
+    const b = e.target.closest && e.target.closest('.btn');
+    $$('.btn.is-mag').forEach((x) => { if (x !== b) { x.classList.remove('is-mag'); x.style.transform = ''; } });
+    if (!b) return;
+    const r = b.getBoundingClientRect();
+    b.classList.add('is-mag');
+    b.style.transform = `translate(${(e.clientX - (r.left + r.width / 2)) * 0.22}px, ${(e.clientY - (r.top + r.height / 2)) * 0.32}px)`;
+  }, { passive: true });
+}
+
+/* ------------------------------------------------------------------ reactive type: letters swell and narrow around the pointer */
+export function createReactiveType() {
+  let groups = [];
+  let rects = [];
+  let raf = 0, lastRects = 0, pointer = null;
+
+  function measure() {
+    rects = [];
+    groups.forEach((chars) => chars.forEach((c) => { const r = c.getBoundingClientRect(); rects.push({ c, x: r.left + r.width / 2, y: r.top + r.height / 2 }); }));
+    lastRects = performance.now();
+  }
+  function frame() {
+    raf = 0;
+    if (!pointer) return;
+    if (performance.now() - lastRects > 400) measure();
+    for (const r of rects) {
+      if (r.y < -200 || r.y > innerHeight + 200) continue;
+      const d = Math.hypot(pointer.x - r.x, pointer.y - r.y);
+      const f = clamp(1 - d / 190);
+      r.c.style.fontVariationSettings = f > 0.01 ? `'wght' ${Math.round(600 + 200 * f)}, 'wdth' ${Math.round(100 - 22 * f)}` : '';
+    }
+  }
+  const onMove = (e) => { pointer = { x: e.clientX, y: e.clientY }; if (!raf) raf = requestAnimationFrame(frame); };
+  const onLeave = () => { pointer = null; rects.forEach((r) => (r.c.style.fontVariationSettings = '')); };
+  addEventListener('pointermove', onMove, { passive: true });
+  addEventListener('scroll', () => { lastRects = 0; }, { passive: true });
+  document.addEventListener('pointerleave', onLeave);
+
+  return {
+    set(list) { groups = list; measure(); },
+    add(chars) { groups.push(chars); measure(); },
+    clear() { groups = []; rects = []; },
+  };
+}
+
+/* ------------------------------------------------------------------ marquee: drifts, speeds up and skews with scroll velocity */
+export function initMarquee(getVelocity) {
+  const mq = $('#marquee');
+  if (!mq) return () => {};
+  const track = $('.marquee-track', mq);
+  const base = track.innerHTML;
+  track.innerHTML = base + base + base + base;
+  let x = 0, w = 0;
+  const measure = () => { w = track.scrollWidth / 4; };
+  measure();
+  addEventListener('resize', measure);
+  const skew = gsap.quickTo(track, 'skewX', { duration: 0.4, ease: 'power3' });
+  return (dt) => {
+    const v = getVelocity();
+    x -= (60 + Math.abs(v) * 900) * dt * (v < -0.02 ? -1 : 1);
+    if (x <= -w) x += w;
+    if (x > 0) x -= w;
+    track.style.transform = `translate3d(${x}px,0,0)`;
+    skew(clamp(v * -14, -9, 9));
+  };
+}
+
+/* ------------------------------------------------------------------ the scanline wipe, also the loader */
+export function createWipe(getField) {
+  const wipe = $('#wipe'), line = $('#wipeLine'), count = $('#wipeCount');
+  const s = { top: 0, bottom: 0 };
+  const apply = (edge) => {
+    wipe.style.clipPath = `inset(${s.top}% 0 ${s.bottom}% 0)`;
+    line.style.transform = `translate3d(0, ${edge}vh, 0)`;
+    line.style.opacity = edge <= 0.2 || edge >= 99.8 ? '0' : '1';
+  };
+  apply(100);
+
+  const burst = (peak) => {
+    const field = getField();
+    if (!field) return;
+    gsap.fromTo(field.state, { burst: 0 }, { burst: peak, duration: 0.55, ease: 'power2.out', yoyo: true, repeat: 1 });
+  };
+
+  return {
+    /** curtain falls from the top, edge line leading */
+    cover() {
+      s.top = 0; s.bottom = 100; wipe.classList.add('is-nav'); wipe.style.display = 'grid';
+      burst(0.9);
+      return new Promise((res) => gsap.to(s, { bottom: 0, duration: 0.7, ease: 'power3.inOut', onUpdate: () => apply(100 - s.bottom), onComplete: res }));
+    },
+    /** curtain lifts downward and away */
+    reveal() {
+      s.top = 0; s.bottom = 0;
+      return new Promise((res) => gsap.to(s, { top: 100, duration: 0.85, ease: 'power3.inOut', onUpdate: () => apply(s.top), onComplete: () => { wipe.classList.remove('is-on'); wipe.style.display = 'none'; res(); } }));
+    },
+    /** first visit: count up while the crystal assembles */
+    loader(ms, ready) {
+      return new Promise((res) => {
+        const o = { v: 0 };
+        gsap.to(o, { v: 100, duration: ms / 1000, ease: 'power2.inOut', onUpdate: () => { count.textContent = String(Math.round(o.v)); }, onComplete: () => { Promise.resolve(ready).then(res); } });
+      });
+    },
+  };
+}
+
+/* ------------------------------------------------------------------ section rail, built from [data-rail] */
+export function buildRail(onGo) {
+  const rail = $('#rail');
+  if (!rail) return { setActive() {} };
+  const secs = $$('main [data-rail]');
+  rail.innerHTML = secs.map((s) => `<a href="#${s.id}"><span>${s.dataset.rail}</span></a>`).join('');
+  rail.hidden = secs.length < 2;
+  const links = $$('a', rail);
+  links.forEach((a, i) => a.addEventListener('click', (e) => { e.preventDefault(); onGo(secs[i]); }));
+  let cur = -1;
+  return {
+    setActive(y, geo) {
+      const yc = y + innerHeight * 0.5;
+      let a = 0;
+      secs.forEach((s, i) => { const g = geo.sections && geo.sections[s.id]; if (g && yc >= g.top) a = i; });
+      if (a === cur) return;
+      cur = a;
+      links.forEach((l, i) => { l.classList.toggle('is-on', i === a); if (i === a) l.setAttribute('aria-current', 'true'); else l.removeAttribute('aria-current'); });
+    },
+  };
+}

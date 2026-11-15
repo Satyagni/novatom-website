@@ -1,0 +1,12 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch({ headless: true, args: ['--use-angle=d3d11', '--ignore-gpu-blocklist'] });
+const page = await (await b.newContext({ viewport: { width: 1440, height: 800 } })).newPage();
+await page.goto('http://127.0.0.1:4173/', { waitUntil: 'domcontentloaded' });
+await page.waitForTimeout(7000);
+await page.mouse.click(700, 300);
+await page.waitForTimeout(6500);
+await page.screenshot({ path: 'tests/shots/replay-pos-top.png' });
+await page.mouse.wheel(0, 900); await page.waitForTimeout(1500);
+console.log('replay visible after scrolling down:', await page.evaluate(() => { const r = document.querySelector('.replay').getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight; }));
+await page.screenshot({ path: 'tests/shots/replay-pos-scrolled.png' });
+await b.close();

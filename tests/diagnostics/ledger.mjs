@@ -1,0 +1,15 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch({ headless: true, args: ['--use-angle=d3d11', '--ignore-gpu-blocklist'] });
+const page = await (await b.newContext({ viewport: { width: 1440, height: 800 } })).newPage();
+await page.goto('http://127.0.0.1:4173/technology', { waitUntil: 'domcontentloaded' });
+await page.waitForTimeout(6000);
+const n = await page.evaluate(() => [...document.querySelectorAll('#rail a')].map((a) => a.textContent));
+console.log(n.join(' | '));
+const i = n.findIndex((t) => /evidence/i.test(t));
+await page.evaluate((i) => document.querySelectorAll('#rail a')[i].click(), i);
+await page.waitForTimeout(3200);
+console.log(await page.evaluate(() => { const e = document.getElementById('ledger'); return { y: Math.round(scrollY), top: Math.round(e.getBoundingClientRect().top), h: e.offsetHeight }; }));
+await page.screenshot({ path: 'tests/shots/ledger-land.png' });
+await page.evaluate(() => scrollTo(0, 0)); await page.waitForTimeout(1500);
+await page.screenshot({ path: 'tests/shots/brand-tech.png', clip: { x: 0, y: 0, width: 1440, height: 120 } });
+await b.close();

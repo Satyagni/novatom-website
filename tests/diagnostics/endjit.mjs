@@ -1,0 +1,15 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch({ headless: true, args: ['--use-angle=d3d11', '--ignore-gpu-blocklist', '--disable-features=OverlayScrollbar'] });
+const page = await (await b.newContext({ viewport: { width: 1440, height: 800 } })).newPage();
+await page.goto('http://127.0.0.1:4173/', { waitUntil: 'domcontentloaded' });
+await page.waitForTimeout(7000);
+await page.evaluate(() => { window.__w = []; const f = () => { const s = window.__field.state; window.__w.push([Math.round(performance.now()), document.documentElement.clientWidth, document.querySelector('.hero h1').getBoundingClientRect().left.toFixed(1), +s.ripple.toFixed(2), +s.scale.toFixed(3), +s.m.toFixed(3), s.a]); window.__r = requestAnimationFrame(f); }; f(); });
+await page.mouse.click(700, 300);
+await page.waitForTimeout(6500);
+const w = await page.evaluate(() => { cancelAnimationFrame(window.__r); return window.__w; });
+const first = w[0][1];
+console.log('clientWidth at start', first, 'at end', w[w.length - 1][1]);
+const t0 = w.find((r, i) => i && r[5] !== w[i - 1][5])[0];
+const rows = w.filter((r) => r[0] - t0 > 3600 && r[0] - t0 < 5400);
+rows.filter((_, i) => i % 6 === 0).forEach((r) => console.log(((r[0] - t0) / 1000).toFixed(2) + 's', 'w=' + r[1], 'h1.left=' + r[2], 'ripple=' + r[3], 'scale=' + r[4], 'm=' + r[5], 'a=' + r[6]));
+await b.close();

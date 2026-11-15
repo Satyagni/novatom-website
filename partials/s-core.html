@@ -1,0 +1,49 @@
+    <section class="core" id="core" aria-labelledby="h-core" data-rail="The core loop" data-pose="st:6;op:.1;ox:0;sc:1;rp:.5;du:1;cl:-1 -1 1 1;ck:0">
+      <div class="core-inner">
+        <div class="core-copy">
+          <h1 id="h-core" class="h2 h1" data-split>One core loop. Any experimental science.</h1>
+          <p>Every experimental science runs the same cycle. We built it once, as a core that never changes, and made everything that differs between fields a replaceable domain pack.</p>
+          <div class="packtabs" id="packTabs" role="group" aria-label="Choose a domain pack">
+            <button type="button" class="packtab is-on" data-pack="0" aria-pressed="true">Semiconductors</button>
+            <button type="button" class="packtab" data-pack="1" aria-pressed="false">Drug discovery</button>
+            <button type="button" class="packtab" data-pack="2" aria-pressed="false">Catalysis</button>
+            <button type="button" class="packtab" data-pack="3" aria-pressed="false">Quantum materials</button>
+            <button type="button" class="packtab" data-pack="4" aria-pressed="false">Your field</button>
+          </div>
+          <p class="note">Pick a field. The ring does not change; only the pack does.</p>
+        </div>
+
+        <div class="coreviz" id="coreviz">
+          <svg id="coreSvg" viewBox="0 0 600 560" role="img" aria-label="The core loop: define, hypothesise, screen, make and measure, learn. A domain pack plugs into it and supplies the hypotheses, tests, instruments, checks and limits for one field.">
+            <defs>
+              <filter id="cglow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <g id="coreBus"></g>
+            <circle class="c-orbit" cx="300" cy="280" r="212"/>
+            <g id="coreSats"></g>
+            <circle class="c-ring" cx="300" cy="280" r="140"/>
+            <circle class="c-ring c-ring-in" cx="300" cy="280" r="96"/>
+            <path id="coreTrail" class="c-trail" d=""/>
+            <g id="coreNodes"></g>
+            <circle id="coreDot" class="c-dot" r="7" cx="300" cy="140" filter="url(#cglow)"/>
+            <text class="c-center" x="300" y="276" text-anchor="middle">Core loop</text>
+            <text class="c-sub" x="300" y="300" text-anchor="middle">fixed</text>
+          </svg>
+
+          <div class="packcard" id="packCard">
+            <div class="pack-head">
+              <p class="pack-kind">Domain pack</p>
+              <p class="pack-title" id="packTitle">Semiconductors</p>
+              <p class="pack-meta" id="packMeta"><span class="pm-prod" id="packProd">NexCon-03</span><span class="pm-status" id="packStatus">Live</span></p>
+            </div>
+            <dl class="pack-slots" id="packSlots">
+              <div><dt>Hypotheses</dt><dd>Alloys, dopants and stacks</dd></div>
+              <div><dt>Tests</dt><dd>DFT and TCAD simulation</dd></div>
+              <div><dt>Instruments</dt><dd>Deposition, XRD, Hall</dd></div>
+              <div><dt>Checks</dt><dd>Band ordering, convergence</dd></div>
+              <div><dt>Limits</dt><dd>Gas, temperature, vacuum</dd></div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
